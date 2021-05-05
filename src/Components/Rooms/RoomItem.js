@@ -8,7 +8,8 @@ const RoomItem = ({ item }) => {
         <TouchableOpacity onPress={
             () => NavigationService.navigate('ChatRoomDetail', {
                 id:item.id,
-                name:item.name
+                name:item.name,
+                roomUserId:item.userId
             })
         } style={styles.item}>
             <Icon name={'comments'} size={30} />
@@ -44,8 +45,9 @@ const styles = StyleSheet.create({
     },
     createdUser:{
         fontSize:13,
-        color:'#a4a4a4',
-        marginTop:5
+        color:'#800000',
+        marginTop:5,
+        fontWeight:'700'
     }
 })
 

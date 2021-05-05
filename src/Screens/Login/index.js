@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -37,7 +37,8 @@ export default class Index extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{flex:1}}>
+      <SafeAreaView style={{flex:1, backgroundColor:'white'}}>
+        <ScrollView>
         <View style={{backgroundColor:'white', flex:1, alignItems:'center',paddingVertical:50}}>
           <View style={{alignItems:'center'}}>
             <Text style={styles.hero}>Welcome Back!</Text>
@@ -107,6 +108,7 @@ export default class Index extends Component {
             }
           </Formik>
         </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }

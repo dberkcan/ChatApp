@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, SafeAreaView } from 'react-native';
 import PushNotification from "react-native-push-notification";
 import firebase from '@react-native-firebase/app'
 import messaging from '@react-native-firebase/messaging';
 import NavigationService from './src/Components/NavigationService';
 import Route from "./src/Route";
+import { SkypeIndicator } from 'react-native-indicators';
+import NetInfo from '@react-native-community/netinfo';
 
 
 export default class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loading:true
+    }
     //this.createDefaultChannel();
   }
   /*
@@ -41,13 +46,37 @@ export default class App extends Component {
     })
   }
 */
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({loading:false})
+    },2000)
+
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+        alert("Internet Yok")
+      }else{
+        //alert("Internet Var")
+      }
+    })
+  }
+
+
   render() {
-    return <Route
-      ref={navigatorRef => {
-        NavigationService.setTopLevelNavigator(navigatorRef);
-    }}
-    />
-    
+    return (
+      <SafeAreaView style={{flex:1}}>
+        {this.state.loading
+          ?
+          <SkypeIndicator color={"blue"} size={50}/>
+          :
+          <Route
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+          }}
+          />
+        }
+    </SafeAreaView>
+    )
   }
 }
 

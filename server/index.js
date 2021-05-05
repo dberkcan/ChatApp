@@ -4,8 +4,21 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 
+let connectionRoomCount = {};
 io.on('connection', function (socket) {
-    socket.emit('hello');
+    socket.on('connection-room',(data) => {
+        socket.join(data.roomId);
+        connectionRoomCount[data.roomId] = (typeof connectionRoomCount[data.roomId] == 'undefined' ? 0 : connectionRoomCount[data.roomId]) + 1
+        io.to(data.roomId).emit('connection-room-view', { count: connectionRoomCount[data.roomId]});
+        console.log(connectionRoomCount)
+    })
+
+    socket.on('leave-room',(data) => {
+        socket.leave(data.roomId);
+        connectionRoomCount[data.roomId] = (typeof connectionRoomCount[data.roomId] == 'undefined' ? 0 : connectionRoomCount[data.roomId] -1)
+        io.to(data.roomId).emit('connection-room-view', { count: connectionRoomCount[data.roomId]});
+        console.log(connectionRoomCount)
+    })
 })
 
 app.get('/',function (req, res){

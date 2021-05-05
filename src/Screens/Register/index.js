@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -19,6 +19,7 @@ export default class Index extends Component {
     
   }
   
+
   _handleSubmit = (values) => {
     auth()
       .createUserWithEmailAndPassword(values.email, values.password)
@@ -48,7 +49,8 @@ export default class Index extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{flex:1}}>
+      <SafeAreaView style={{flex:1, backgroundColor:'white'}}>
+        <ScrollView>
         <View style={{backgroundColor:'white', flex:1, alignItems:'center',paddingVertical:50}}>
           <View style={{alignItems:'center'}}>
             <Text style={styles.hero}>Welcome</Text>
@@ -66,7 +68,7 @@ export default class Index extends Component {
               Yup.object().shape({
                 email:Yup.string().email().required('Email address is required'),
                 password:Yup.string().min(6).required('Password is required'),
-                passwordConfirm:Yup.string().oneOf([Yup.ref('password')], 'Passwords not matched').required()
+                passwordConfirm:Yup.string().oneOf([Yup.ref('password')], 'Passwords not matched').required("Password is required")
               })
             }
           >
@@ -144,6 +146,7 @@ export default class Index extends Component {
             }
           </Formik>
         </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }

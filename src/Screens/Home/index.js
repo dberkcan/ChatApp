@@ -21,17 +21,18 @@ export default class Index extends Component {
             title:'Rooms',
             headerTitleStyle:{
                 flex: 1,
+                color:'#7165E3',
                 textAlign:'center',
                 fontWeight: 'bold',
             },
-            headerLeft:<TouchableOpacity onPress={() => navigation.navigate('ChatRoomCreate')} style={{marginLeft:15, padding: 5,}}><Icon name={"plus"} size={25}></Icon></TouchableOpacity>,
+            headerLeft:<TouchableOpacity onPress={() => navigation.navigate('ChatRoomCreate')} style={{marginLeft:15, padding: 5,}}><Icon name={"plus"} size={25} color={"#7165E3"}></Icon></TouchableOpacity>,
             headerRight:<TouchableOpacity onPress={() => {
                 auth()
                     .signOut()
                     .then(() => {
                         navigation.navigate('Auth');
             });
-            }} style={{marginRight:15,padding:5,}}><Icon name={"sign-out-alt"} size={30} /></TouchableOpacity>
+            }} style={{marginRight:15,padding:5,}}><Icon name={"sign-out-alt"} size={30} color={"#7165E3"}/></TouchableOpacity>
         }
     }
 
@@ -72,7 +73,7 @@ export default class Index extends Component {
         return (
             <SafeAreaView style={{flex:1}}>
                 <FlatList
-                    style={{flex:1, padding: 5,}}
+                    style={{flex:1, padding: 5, backgroundColor:'#7165E3'}}
                     data={this.state.rooms}
                     renderItem={this.renderItem}
                 />

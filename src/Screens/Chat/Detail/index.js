@@ -16,6 +16,8 @@ const connectionConfig = {
     transports:['websocket']
 }
 
+var socket = io("http://192.168.1.105:3000", connectionConfig);
+
 export default class Index extends Component {
 
 
@@ -23,7 +25,8 @@ export default class Index extends Component {
         super(props);
         this.state = {
             messages:[],
-            text:''
+            text:'',
+            connectedUserCount:0
         }
     }
 
@@ -34,17 +37,33 @@ export default class Index extends Component {
             headerTitleStyle:{
                 textAlign:'center',
                 fontWeight: 'bold',
-                marginRight:50
             },
+            headerRight:(navigation.getParam("userId") == navigation.getParam("roomUserId")) ? <TouchableOpacity onPress={navigation.getParam("_handleDelete")} style={{marginRight:15, padding:5,}}><Icon name={"trash"} size={17} color={"red"}></Icon></TouchableOpacity> : null
         }
     }
 
+    _handleDelete = async () => {
+        const roomId = this.props.navigation.getParam("id")
+        await database()
+            .ref('/rooms/' + roomId)
+            .remove();
+        await database()
+            .ref('/messages/' + roomId)
+            .remove();
+        this.props.navigation.goBack()
+    }
+
     componentDidMount() {
-        var socket = io("http://192.168.1.105:3000", connectionConfig);
-        socket.on('connect', function () {
-            console.log('socket baglandi')
-        });
+        const user = firebase.auth().currentUser;
+        const userId = user.uid;
+        this.props.navigation.setParams({userId, _handleDelete:this._handleDelete})
         const roomId = this.props.navigation.getParam("id");
+        socket.emit('connection-room', { roomId })
+        socket.on('connection-room-view', (data) => {
+            this.setState({
+                connectedUserCount:data.count
+            })
+        })
 
         database()
             .ref(`messages/${roomId}`)
@@ -61,7 +80,6 @@ export default class Index extends Component {
                     })
                 })
                 this.setState({messages})
-                console.log(messages)
             });
 
 
@@ -70,6 +88,10 @@ export default class Index extends Component {
 
     renderItem = ({ item, index }) => {
         return <Message item={item} index={index} />
+    }
+
+    componentWillUnmount(){
+        socket.emit('leave-room', {roomId: this.props.navigation.getParam("id")})
     }
 
 
@@ -98,11 +120,16 @@ export default class Index extends Component {
 
 
   render() {
-      const { text, messages} = this.state;
+      const { text, messages, connectedUserCount} = this.state;
     return (
       <SafeAreaView style={{flex:1}}>
+          <View style={{ padding:10, backgroundColor:'#ddd', justifyContent:'center', alignItems:'center'}}>
+              <Text>Connected Users : {connectedUserCount} </Text>
+          </View>
           <FlatList
-            data={messages}
+            inverted
+            ref={(ref) => this.flatListRef = ref}
+            data={messages.reverse()}
             renderItem={this.renderItem}
             style={styles.flatlist}/>
           <View style={styles.input_area}>
