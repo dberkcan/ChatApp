@@ -12,7 +12,8 @@ export default class Index extends Component {
     constructor(){
         super();
         this.state = {
-            rooms: []
+            rooms: [],
+            text:''
         }
     }
 
@@ -69,10 +70,43 @@ export default class Index extends Component {
         )
     }
 
+    searchFilter = text => {
+        const newData = this.state.rooms.filter(item => {
+            const listItem = `${item.name.toLowerCase()} ${item.userName.toLowerCase()}`
+
+            return listItem.indexOf(text.toLowerCase()) > -1;
+        });
+
+        this.setState({
+            rooms: newData
+        })
+    }
+
+    renderHeader = () => {
+        const {text} = this.state;
+        return (
+            <View style={{padding:10}}>
+                <TextInput
+                    onChangeText={text => {
+                        this.setState({
+                            text
+                        });
+
+                        this.searchFilter(text);
+                    }}
+                    value={text}
+                    placeholder="Search"
+                    style={{fontSize:16, backgroundColor:'#f9f9f9', padding:10, borderRadius:10}}
+                />
+            </View>
+        )
+    }
+
     render() {
         return (
             <SafeAreaView style={{flex:1}}>
                 <FlatList
+                    ListHeaderComponent={this.renderHeader()}
                     style={{flex:1, padding: 5, backgroundColor:'#7165E3'}}
                     data={this.state.rooms}
                     renderItem={this.renderItem}
